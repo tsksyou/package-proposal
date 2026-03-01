@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>社區包裹管理方案</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --stone-50: #FAFAF7;
+  --stone-100: #F5F4EF;
+  --stone-200: #EDEBE4;
+  --stone-300: #E0DDD4;
+  --stone-400: #C4C0B5;
+  --stone-500: #9B9689;
+  --stone-600: #74706A;
+  --stone-700: #504D48;
+  --stone-800: #36342F;
+  --stone-900: #1D1C19;
+
+  --forest-400: #4A9E7E;
+  --forest-500: #2D7D5F;
+  --forest-600: #1B6349;
+  --forest-700: #0F4A35;
+
+  --ocean-400: #5B8EC9;
+  --ocean-500: #3A6FA8;
+  --ocean-600: #255A8F;
+
+  --amber-400: #D4A24C;
+  --amber-500: #B8872E;
+  --amber-600: #8E6A22;
+  --amber-bg: #FFFBF2;
+
+  --clay-400: #C27E52;
+  --clay-500: #A66738;
+  --clay-600: #7D4F2A;
+
+  --red-400: #D4574E;
+  --red-500: #B83B3B;
+  --red-bg: #FFF7F6;
+
+  --shadow-1: 0 1px 2px rgba(29,28,25,0.04);
+  --shadow-2: 0 2px 8px rgba(29,28,25,0.06), 0 1px 2px rgba(29,28,25,0.04);
+  --shadow-3: 0 8px 24px rgba(29,28,25,0.08), 0 2px 8px rgba(29,28,25,0.04);
+  --shadow-4: 0 16px 48px rgba(29,28,25,0.12), 0 4px 12px rgba(29,28,25,0.06);
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans TC', -apple-system, sans-serif;
+  background: var(--stone-100);
+  color: var(--stone-800);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ════════════════════
+   SVG ICON SYSTEM
+   ════════════════════ */
+.ico {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.ico svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ico-lg { width: 20px; height: 20px; }
+.ico-xl { width: 28px; height: 28px; }
+.ico-flow { width: 24px; height: 24px; }
+
+/* ════════════════════
+   HERO
+   ════════════════════ */
+.hero {
+  position: relative;
+  background: var(--stone-900);
+  color: white;
+  overflow: hidden;
+  padding: 3rem 1.5rem 2.5rem;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  right: -40px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45,125,95,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--forest-400);
+  margin-bottom: 1rem;
+  animation: fadeIn 0.8s var(--ease-out) both;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--forest-400);
+}
+
+.hero h1 {
+  position: relative;
+  z-index: 1;
+  font-family: 'Noto Serif TC', 'Lora', serif;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.5rem;
+  animation: slideUp 0.8s var(--ease-out) 0.1s both;
+}
+
+.hero-desc {
+  position: relative;
+  z-index: 1;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 300;
+  animation: slideUp 0.8s var(--ease-out) 0.2s both;
+}
+
+.hero-meta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  animation: slideUp 0.8s var(--ease-out) 0.3s both;
+}
+
+.hero-meta-item { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
+.hero-meta-item span { display: block; color: rgba(255,255,255,0.7); font-weight: 500; font-size: 0.78rem; margin-top: 2px; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ════════════════════
+   TAB BAR
+   ════════════════════ */
+.tab-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: rgba(250,250,247,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--stone-200);
+  will-change: transform;
+}
+
+.tab-bar-inner { max-width: 720px; margin: 0 auto; display: flex; position: relative; }
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 4px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  position: relative;
+  z-index: 2;
+}
+
+.tab-btn-tier { font-size: 0.6rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--stone-400); transition: color 0.3s ease; pointer-events: none; }
+.tab-btn-label { font-size: 0.78rem; font-weight: 500; color: var(--stone-500); transition: color 0.3s ease; white-space: nowrap; pointer-events: none; }
+.tab-btn.active .tab-btn-tier { color: var(--stone-600); }
+.tab-btn.active .tab-btn-label { color: var(--stone-900); font-weight: 700; }
+
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2.5px;
+  border-radius: 2px 2px 0 0;
+  transition: left 0.4s var(--ease-out), width 0.4s var(--ease-out), background 0.4s ease;
+  will-change: left, width;
+  pointer-events: none;
+}
+
+.tab-indicator[data-active="1"] { background: var(--forest-500); }
+.tab-indicator[data-active="2"] { background: var(--ocean-500); }
+.tab-indicator[data-active="3"] { background: var(--clay-500); }
+
+/* ════════════════════
+   PANELS
+   ════════════════════ */
+.panels-wrapper { max-width: 720px; margin: 0 auto; padding: 0 1rem; }
+.panel { display: none; padding: 1.5rem 0 7rem; }
+.panel.active { display: block; animation: panelIn 0.5s var(--ease-out) both; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ════════════════════
+   TIER HERO CARD
+   ════════════════════ */
+.tier-hero {
+  position: relative;
+  border-radius: var(--r-lg);
+  padding: 2rem 1.5rem 1.75rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  color: white;
+}
+
+.tier-hero.t1 { background: linear-gradient(145deg, #1B6349 0%, #2D9970 60%, #3DB88A 100%); }
+.tier-hero.t2 { background: linear-gradient(145deg, #1E4F7E 0%, #3A6FA8 60%, #5B8EC9 100%); }
+.tier-hero.t3 { background: linear-gradient(145deg, #6B4422 0%, #A66738 60%, #C27E52 100%); }
+
+.tier-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.tier-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -20px;
+  width: 140px; height: 140px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.tier-number {
+  font-family: 'Cormorant Garamond', 'Lora', serif;
+  font-size: 3rem; font-weight: 700; line-height: 1; opacity: 0.2;
+  position: absolute; top: 1rem; right: 1.5rem; z-index: 1;
+}
+
+.tier-badge {
+  position: relative; z-index: 1;
+  display: inline-block; font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  background: rgba(255,255,255,0.18); padding: 4px 12px; border-radius: 20px; margin-bottom: 0.75rem;
+}
+
+.tier-hero h2 { position: relative; z-index: 1; font-family: 'Noto Serif TC', serif; font-size: 1.35rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.4rem; }
+.tier-hero p { position: relative; z-index: 1; font-size: 0.82rem; color: rgba(255,255,255,0.75); line-height: 1.55; }
+
+/* ════════════════════
+   CARDS
+   ════════════════════ */
+.card {
+  background: white;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover { box-shadow: var(--shadow-3); }
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--stone-200);
+  background: var(--stone-50);
+}
+
+.card-head-icon {
+  width: 28px; height: 28px;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-head-icon.green { background: #E6F5ED; color: var(--forest-600); }
+.card-head-icon.blue { background: #E8F0FA; color: var(--ocean-600); }
+.card-head-icon.brown { background: #FDF2E9; color: var(--clay-600); }
+.card-head-icon.amber { background: #FFF8ED; color: var(--amber-600); }
+
+.card-head-title { font-size: 0.82rem; font-weight: 600; color: var(--stone-800); }
+.card-body { padding: 1rem 1.25rem; }
+
+.detail-item {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--stone-100);
+  font-size: 0.82rem;
+}
+.detail-item:last-child { border-bottom: none; }
+.detail-key { flex-shrink: 0; width: 56px; font-size: 0.72rem; font-weight: 600; color: var(--stone-500); letter-spacing: 0.3px; }
+.detail-val { flex: 1; color: var(--stone-800); }
+
+.check-item { display: flex; align-items: flex-start; gap: 12px; padding: 0.6rem 0; font-size: 0.82rem; line-height: 1.55; }
+
+.check-dot {
+  flex-shrink: 0; width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+
+.check-dot.t1 { background: var(--forest-500); color: white; }
+.check-dot.t2 { background: var(--ocean-500); color: white; }
+.check-dot.t3 { background: var(--clay-500); color: white; }
+
+.check-dot .ico svg { stroke: white; }
+
+/* ════════════════════
+   FLOW DIAGRAM
+   ════════════════════ */
+.flow-card {
+  background: white;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.flow-card .card-head { background: var(--stone-900); border-bottom: none; }
+.flow-card .card-head-title { color: white; }
+.flow-card .card-head-icon { background: rgba(255,255,255,0.1); color: white; }
+
+.flow-body {
+  padding: 1.5rem 1.25rem;
+  background: linear-gradient(180deg, var(--stone-900) 0%, var(--stone-800) 100%);
+}
+
+.flow-node { text-align: center; margin-bottom: 4px; }
+
+.flow-icon-wrap {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px;
+  position: relative; z-index: 2;
+}
+
+.flow-icon-wrap.start { background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.18); }
+.flow-icon-wrap svg { stroke: rgba(255,255,255,0.7); }
+
+.flow-label { font-size: 0.68rem; font-weight: 600; color: rgba(255,255,255,0.9); line-height: 1.35; margin-bottom: 2px; }
+.flow-sub { font-size: 0.6rem; color: rgba(255,255,255,0.4); }
+
+.flow-arrow-down { display: flex; flex-direction: column; align-items: center; margin: 12px auto; }
+.flow-arrow-down .line { width: 1.5px; height: 20px; background: rgba(255,255,255,0.2); }
+.flow-arrow-down .head { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid rgba(255,255,255,0.3); }
+
+.flow-decision { text-align: center; padding: 10px 0; }
+
+.flow-decision-box {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(184,135,46,0.2); border: 1px solid rgba(184,135,46,0.3);
+  color: var(--amber-400);
+  font-size: 0.68rem; font-weight: 600;
+  padding: 6px 16px; border-radius: 20px;
+}
+
+.flow-decision-box .ico svg { stroke: var(--amber-400); }
+.flow-decision-box.clay { background: rgba(166,103,56,0.2); border-color: rgba(166,103,56,0.3); color: var(--clay-400); }
+.flow-decision-box.clay .ico svg { stroke: var(--clay-400); }
+
+.flow-branch { display: flex; gap: 8px; margin-top: 4px; }
+
+.flow-branch-item {
+  flex: 1; text-align: center;
+  padding: 12px 8px; border-radius: var(--r-sm);
+}
+
+.flow-branch-item.t1 { background: rgba(45,125,95,0.12); border: 1px solid rgba(45,125,95,0.2); }
+.flow-branch-item.t2 { background: rgba(58,111,168,0.12); border: 1px solid rgba(58,111,168,0.2); }
+.flow-branch-item.t3 { background: rgba(166,103,56,0.12); border: 1px solid rgba(166,103,56,0.2); }
+
+.flow-branch-tag { font-size: 0.55rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.flow-branch-item.t1 .flow-branch-tag { color: var(--forest-400); }
+.flow-branch-item.t2 .flow-branch-tag { color: var(--ocean-400); }
+.flow-branch-item.t3 .flow-branch-tag { color: var(--clay-400); }
+
+.flow-branch-name { font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 2px; }
+.flow-branch-loc { font-size: 0.6rem; color: rgba(255,255,255,0.4); }
+
+/* ════════════════════
+   SYSTEM BADGE
+   ════════════════════ */
+.system-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #E8F5EE, #D4EDDF);
+  border: 1px solid rgba(45,125,95,0.2);
+  color: var(--forest-600);
+  font-size: 0.72rem; font-weight: 600;
+  padding: 5px 14px; border-radius: 20px;
+}
+
+.system-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--forest-400);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+/* ════════════════════
+   LEGAL REFERENCES
+   ════════════════════ */
+.legal-card {
+  background: white;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  border-left: 3px solid var(--amber-500);
+}
+
+.legal-card .card-head { background: var(--amber-bg); border-bottom-color: rgba(184,135,46,0.12); }
+.legal-card .card-head-title { color: var(--amber-600); }
+
+.legal-body { padding: 0.5rem 0; }
+.legal-group { border-bottom: 1px solid var(--stone-100); }
+.legal-group:last-child { border-bottom: none; }
+
+.legal-group-head {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.82rem; line-height: 1.55;
+}
+
+.legal-bullet { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--amber-500); margin-top: 9px; }
+.legal-group-text { flex: 1; }
+.legal-group-text strong { font-weight: 600; color: var(--stone-900); }
+
+.legal-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 1.25rem 0.85rem 2.6rem; }
+
+.law-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--amber-bg);
+  border: 1px solid rgba(184,135,46,0.18);
+  color: var(--amber-600);
+  font-size: 0.7rem; font-weight: 600;
+  padding: 5px 11px; border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.law-chip:hover { background: #FFF3DC; border-color: rgba(184,135,46,0.35); transform: translateY(-1px); box-shadow: 0 3px 8px rgba(184,135,46,0.12); }
+.law-chip:active { transform: translateY(0); }
+.law-chip .ico svg { stroke: var(--amber-500); }
+
+/* ════════════════════
+   CALLOUT BOXES
+   ════════════════════ */
+.callout {
+  display: flex; gap: 12px;
+  padding: 1rem 1.25rem;
+  border-radius: var(--r-md);
+  margin-bottom: 1.25rem;
+  font-size: 0.8rem; line-height: 1.6;
+}
+
+.callout-icon {
+  flex-shrink: 0; width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+
+.callout-icon .ico svg { stroke: white; }
+
+.callout.info { background: #EEF6F1; border: 1px solid rgba(27,99,73,0.1); color: var(--forest-700); }
+.callout.info .callout-icon { background: var(--forest-500); }
+
+.callout.warn { background: var(--amber-bg); border: 1px solid rgba(184,135,46,0.12); color: var(--amber-600); }
+.callout.warn .callout-icon { background: var(--amber-500); }
+
+.callout.danger { background: var(--red-bg); border: 1px solid rgba(184,59,59,0.1); color: #8B2E2E; }
+.callout.danger .callout-icon { background: var(--red-500); }
+
+.callout strong { font-weight: 600; }
+
+/* ════════════════════
+   BUDGET TABLE
+   ════════════════════ */
+.budget-card { background: white; border-radius: var(--r-md); box-shadow: var(--shadow-2); margin-bottom: 1.25rem; overflow: hidden; }
+
+.budget-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--stone-200);
+  background: var(--stone-50);
+}
+
+.budget-head-left { display: flex; align-items: center; gap: 10px; }
+.budget-head-title { font-size: 0.82rem; font-weight: 600; }
+.budget-head-left .ico svg { stroke: var(--stone-600); }
+
+.btn-add {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--stone-300);
+  border-radius: 20px; background: white;
+  color: var(--stone-700);
+  font-family: inherit; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; transition: all 0.25s var(--ease-out);
+}
+
+.btn-add:hover { border-color: var(--forest-500); color: var(--forest-600); background: #F4FBF8; transform: translateY(-1px); box-shadow: 0 2px 6px rgba(27,99,73,0.1); }
+.btn-add:active { transform: translateY(0); }
+
+.b-table { width: 100%; border-collapse: collapse; }
+.b-table thead th { padding: 7px 12px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--stone-500); text-align: left; border-bottom: 1px solid var(--stone-200); }
+.b-table thead th.num { text-align: right; width: 68px; }
+.b-table thead th.act { width: 36px; }
+
+.b-table tbody tr { transition: background 0.15s ease; }
+.b-table tbody tr:hover { background: var(--stone-50); }
+.b-table tbody td { padding: 0 12px; border-bottom: 1px solid var(--stone-100); vertical-align: middle; height: 44px; font-size: 0.8rem; }
+.b-table tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.b-table tbody td.subtotal { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--stone-700); }
+.b-table tbody td:last-child { text-align: center; }
+
+.ed {
+  width: 100%; background: transparent;
+  border: 1.5px solid transparent; border-radius: var(--r-sm);
+  padding: 4px 8px;
+  font-family: inherit; font-size: 0.8rem; color: var(--stone-800);
+  transition: all 0.2s ease;
+}
+
+.ed:hover { border-color: var(--stone-200); background: var(--stone-50); }
+.ed:focus { outline: none; border-color: var(--forest-500); background: white; box-shadow: 0 0 0 3px rgba(45,125,95,0.08); }
+.ed-num { text-align: right; width: 58px; font-variant-numeric: tabular-nums; }
+
+.btn-del {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: transparent;
+  color: var(--stone-400); font-size: 1.1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-del:hover { background: var(--red-bg); color: var(--red-500); }
+
+.budget-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  border-top: 2px solid var(--stone-200);
+  background: var(--stone-50);
+}
+
+.budget-foot-label { font-size: 0.78rem; font-weight: 600; color: var(--stone-600); }
+.budget-foot-total { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.budget-foot-total.t2 { color: var(--ocean-600); }
+.budget-foot-total.t3 { color: var(--clay-600); }
+
+/* ════════════════════
+   BOTTOM BAR
+   ════════════════════ */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 800;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--stone-200);
+  padding: 10px 1.25rem calc(10px + env(safe-area-inset-bottom));
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.bottom-bar-left { font-size: 0.7rem; color: var(--stone-500); line-height: 1.35; }
+.bottom-bar-right { text-align: right; }
+.bottom-bar-total { font-family: 'Cormorant Garamond', 'Lora', serif; font-size: 1.5rem; font-weight: 700; color: var(--stone-900); letter-spacing: -0.02em; line-height: 1.1; }
+.bottom-bar-hint { font-size: 0.62rem; color: var(--stone-400); margin-top: 1px; }
+
+/* ════════════════════
+   BOTTOM SHEET
+   ════════════════════ */
+.sheet-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(29,28,25,0); pointer-events: none;
+  transition: background 0.35s ease;
+}
+
+.sheet-overlay.open { background: rgba(29,28,25,0.45); pointer-events: auto; }
+
+.sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 9001; background: white;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  max-height: 75vh;
+  transform: translateY(100%);
+  transition: transform 0.4s var(--ease-out);
+  box-shadow: var(--shadow-4);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+.sheet.open { transform: translateY(0); }
+
+.sheet-handle { display: flex; justify-content: center; padding: 12px 0 4px; cursor: grab; flex-shrink: 0; }
+.sheet-handle::after { content: ''; width: 36px; height: 4px; border-radius: 4px; background: var(--stone-300); }
+
+.sheet-head { padding: 0.25rem 1.5rem 0.85rem; border-bottom: 1px solid var(--stone-200); flex-shrink: 0; }
+.sheet-title { font-family: 'Noto Serif TC', serif; font-size: 1.05rem; font-weight: 700; color: var(--stone-900); line-height: 1.35; margin-bottom: 2px; }
+.sheet-source { font-size: 0.68rem; color: var(--stone-500); }
+.sheet-content { padding: 1.25rem 1.5rem 2rem; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; }
+.sheet-text { font-size: 0.85rem; line-height: 1.8; color: var(--stone-700); }
+
+.sheet-close {
+  position: absolute; top: 14px; right: 16px;
+  width: 32px; height: 32px; border-radius: 50%;
+  border: none; background: var(--stone-100);
+  color: var(--stone-600);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease; z-index: 1;
+}
+
+.sheet-close:hover { background: var(--stone-200); color: var(--stone-900); }
+.sheet-close .ico svg { stroke: currentColor; }
+
+/* ════════════════════
+   RESPONSIVE
+   ════════════════════ */
+@media (min-width: 480px) {
+  .hero { padding: 3.5rem 2rem 2.5rem; }
+  .panels-wrapper { padding: 0 1.5rem; }
+  .tab-btn { padding: 14px 8px 16px; }
+  .tab-btn-label { font-size: 0.82rem; }
+}
+
+@media (min-width: 768px) {
+  .hero { padding: 4rem 2.5rem 3rem; min-height: 260px; }
+  .sheet { max-width: 520px; left: 50%; right: auto; transform: translateX(-50%) translateY(100%); }
+  .sheet.open { transform: translateX(-50%) translateY(0); }
+}
+
+@media print {
+  .tab-bar, .bottom-bar, .sheet-overlay, .sheet { display: none !important; }
+  .panel { display: block !important; page-break-after: always; padding: 1rem 0 2rem; }
+  .hero { background: white !important; color: black !important; border-bottom: 2px solid #333; }
+  .hero h1 { color: black; }
+  body { background: white; }
+  .card, .legal-card, .budget-card, .flow-card { box-shadow: none; border: 1px solid #ddd; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SVG ICON DEFINITIONS (hidden)
+     All icons: 24x24, stroke-width 1.5, round caps
+     ══════════════════════════════════════════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/>
+  </symbol>
+  <symbol id="i-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="19" r="3"/><path d="M8.6 16.8 15.4 7.2"/><path d="M18 8v2a4 4 0 0 1-4 4H6"/>
+  </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21s-8-5.5-8-11a8 8 0 1 1 16 0c0 5.5-8 11-8 11z"/><circle cx="12" cy="10" r="2.5"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3v18"/><path d="M4 7h16"/><path d="m4 7 2 6h0a3 3 0 0 0 4 0h0L8 7"/><path d="m16 7 2 6h0a3 3 0 0 0 4 0h0L20 7"/><path d="M2 21h20"/>
+  </symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+  </symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/><path d="m14.5 12.8 2-2"/><path d="m11.5 9.8 2-2"/><path d="m8.5 6.8 2-2"/>
+  </symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>
+  </symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.3 3.2 1.7 18a2 2 0 0 0 1.7 3h17.2a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M15.5 9.5a3 3 0 0 0-3-1.5H11a2.5 2.5 0 0 0 0 5h2a2.5 2.5 0 0 1 0 5h-1.5a3 3 0 0 1-3-1.5"/>
+  </symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/>
+  </symbol>
+  <symbol id="i-section" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/>
+  </symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+</svg>
+
+<!-- ══ HERO ══ -->
+<header class="hero">
+  <div class="hero-eyebrow">社區管理提案</div>
+  <h1>包裹收發管理方案</h1>
+  <p class="hero-desc">22 戶透天社區 — 三級分流物流管理</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">提案日期<span>2026 年 3 月</span></div>
+    <div class="hero-meta-item">提案單位<span>管理委員會</span></div>
+    <div class="hero-meta-item">社區規模<span>22 戶</span></div>
+  </div>
+</header>
+
+<!-- ══ TAB BAR ══ -->
+<nav class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-btn active" data-tab="1">
+      <span class="tab-btn-tier">Tier 1</span>
+      <span class="tab-btn-label">日常領取</span>
+    </button>
+    <button class="tab-btn" data-tab="2">
+      <span class="tab-btn-tier">Tier 2</span>
+      <span class="tab-btn-label">網購暫存</span>
+    </button>
+    <button class="tab-btn" data-tab="3">
+      <span class="tab-btn-tier">Tier 3</span>
+      <span class="tab-btn-label">物流暫存</span>
+    </button>
+    <div class="tab-indicator" id="tabIndicator" data-active="1"></div>
+  </div>
+</nav>
+
+<!-- ══ PANELS ══ -->
+<div class="panels-wrapper">
+
+<!-- ═══ PANEL 1 ═══ -->
+<section class="panel active" id="panel-1">
+
+  <div class="tier-hero t1">
+    <span class="tier-number">01</span>
+    <span class="tier-badge">Tier 1 — 現有系統</span>
+    <h2>日常領取型住戶</h2>
+    <p>由智生活系統管理，使用管理室現有包裹室</p>
+  </div>
+
+  <!-- 物流動線圖 -->
+  <div class="flow-card">
+    <div class="card-head">
+      <div class="card-head-icon" style="background:rgba(255,255,255,0.1);">
+        <span class="ico"><svg><use href="#i-route"/></svg></span>
+      </div>
+      <div class="card-head-title" style="color:white;">包裹分流動線</div>
+    </div>
+    <div class="flow-body">
+      <div class="flow-node">
+        <div class="flow-icon-wrap start">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+        </div>
+        <div class="flow-label">包裹送達社區</div>
+        <div class="flow-sub">物流 / 宅配 / 郵務</div>
+      </div>
+
+      <div class="flow-arrow-down"><span class="line"></span><span class="head"></span></div>
+
+      <div class="flow-decision">
+        <div class="flow-decision-box">
+          <span class="ico" style="width:14px;height:14px;"><svg><use href="#i-zap"/></svg></span>
+          管理員依包裹大小分流
+        </div>
+      </div>
+
+      <div class="flow-arrow-down"><span class="line"></span><span class="head"></span></div>
+
+      <div class="flow-branch">
+        <div class="flow-branch-item t1">
+          <div class="flow-branch-tag">Tier 1</div>
+          <div class="flow-branch-name">包裹室</div>
+          <div class="flow-branch-loc">1F 管理室</div>
+        </div>
+        <div class="flow-branch-item t2">
+          <div class="flow-branch-tag">Tier 2</div>
+          <div class="flow-branch-name">暫存架</div>
+          <div class="flow-branch-loc">1F 大廳</div>
+        </div>
+        <div class="flow-branch-item t3">
+          <div class="flow-branch-tag">Tier 3</div>
+          <div class="flow-branch-name">物流室</div>
+          <div class="flow-branch-loc">B1 電信室</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow-down" style="margin-top:12px;"><span class="line"></span><span class="head"></span></div>
+
+      <div class="flow-decision" style="margin-bottom:8px;">
+        <div class="flow-decision-box clay">
+          <span class="ico" style="width:14px;height:14px;"><svg><use href="#i-ruler"/></svg></span>
+          包裹室放不下的大型包裹 → 直接送 B1 物流室
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 空間說明 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon green">
+        <span class="ico"><svg><use href="#i-pin"/></svg></span>
+      </div>
+      <div class="card-head-title">空間配置</div>
+    </div>
+    <div class="card-body">
+      <div class="detail-item"><span class="detail-key">地點</span><span class="detail-val">1F 管理室包裹室（現有空間）</span></div>
+      <div class="detail-item"><span class="detail-key">對象</span><span class="detail-val">當日即領的一般住戶</span></div>
+      <div class="detail-item"><span class="detail-key">管理</span><span class="detail-val"><span class="system-badge"><span class="system-dot"></span>智生活系統運作中</span></span></div>
+      <div class="detail-item"><span class="detail-key">分流</span><span class="detail-val">包裹室放不下的大型包裹，直接送往 B1 物流室</span></div>
+    </div>
+  </div>
+
+  <!-- 現況說明 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon green">
+        <span class="ico"><svg><use href="#i-check"/></svg></span>
+      </div>
+      <div class="card-head-title">現況說明</div>
+    </div>
+    <div class="card-body">
+      <div class="check-item"><span class="check-dot t1"><span class="ico" style="width:11px;height:11px;"><svg><use href="#i-check"/></svg></span></span><span>已由<strong>智生活系統</strong>進行包裹登記與通知管理</span></div>
+      <div class="check-item"><span class="check-dot t1"><span class="ico" style="width:11px;height:11px;"><svg><use href="#i-check"/></svg></span></span><span>管理室包裹室空間有限，僅供放得下的一般包裹暫放</span></div>
+      <div class="check-item"><span class="check-dot t1"><span class="ico" style="width:11px;height:11px;"><svg><use href="#i-check"/></svg></span></span><span>尺寸過大、包裹室放不下的，由管理員直接送往 B1 物流室</span></div>
+      <div class="check-item"><span class="check-dot t1"><span class="ico" style="width:11px;height:11px;"><svg><use href="#i-check"/></svg></span></span><span>本級方案無需額外採購，維持現有流程即可</span></div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon"><span class="ico" style="width:13px;height:13px;"><svg><use href="#i-bulb"/></svg></span></div>
+    <div><strong>無需額外預算</strong> — 此級方案由智生活系統管理，設備與流程皆已到位。核心改變在於建立「大小分流」機制：包裹室放不下的大型包裹，直接送往 B1 物流室暫存。</div>
+  </div>
+
+</section>
+
+<!-- ═══ PANEL 2 ═══ -->
+<section class="panel" id="panel-2">
+
+  <div class="tier-hero t2">
+    <span class="tier-number">02</span>
+    <span class="tier-badge">Tier 2 — 進階方案</span>
+    <h2>網購 / 經常出國住戶</h2>
+    <p>1F 大廳設置移動式置物架，提供短期包裹暫存空間</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon blue"><span class="ico"><svg><use href="#i-pin"/></svg></span></div>
+      <div class="card-head-title">空間配置</div>
+    </div>
+    <div class="card-body">
+      <div class="detail-item"><span class="detail-key">地點</span><span class="detail-val">1F 大廳（管理室旁側空間）</span></div>
+      <div class="detail-item"><span class="detail-key">對象</span><span class="detail-val">網購頻繁、經常出差 / 出國的住戶</span></div>
+      <div class="detail-item"><span class="detail-key">方式</span><span class="detail-val">移動式置物架暫存，分層 / 分格標示戶號</span></div>
+      <div class="detail-item"><span class="detail-key">特點</span><span class="detail-val">可移動、彈性調整、不影響建築結構</span></div>
+    </div>
+  </div>
+
+  <!-- Legal -->
+  <div class="legal-card">
+    <div class="card-head">
+      <div class="card-head-icon amber"><span class="ico"><svg><use href="#i-scale"/></svg></span></div>
+      <div class="card-head-title">相關法規整理</div>
+    </div>
+    <div class="legal-body">
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>避難動線淨寬要求</strong> — 大廳屬避難層，走道淨寬須維持 120cm 以上，置物架不得阻擋逃生動線與出入口。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('建築技術規則建築設計施工編 第 92 條','走廊之設置應依左列規定：供公眾使用建築物走廊淨寬，單邊居室不得小於 1.2 公尺，雙邊居室不得小於 1.6 公尺。走廊不得設置突出物。','建築技術規則建築設計施工編（內政部）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 建築技術規則 §92</span>
+          <span class="law-chip" onclick="openSheet('建築技術規則建築設計施工編 第 90 條','直通樓梯之出入口，應直接連接戶外或避難層之走廊或通道。避難層出入口淨寬度不得小於 1.2 公尺，且不得設置門檻，門應向避難方向開啟。','建築技術規則建築設計施工編（內政部）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 建築技術規則 §90</span>
+        </div>
+      </div>
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>消防通道暢通</strong> — 消防法規要求不得堆積妨礙逃生之物品，置物架須保持走道暢通且可快速移除。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('消防法 第 6 條','本法所定各類場所之管理權人應設置並維護其消防安全設備；場所之分類及消防安全設備設置標準，由中央主管機關定之。管理權人並應維護消防安全設備、防火避難設施之有效使用。','消防法（內政部消防署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 消防法 §6</span>
+          <span class="law-chip" onclick="openSheet('消防法施行細則 第 13 條','管理權人依本法第六條第一項規定維護防火避難設施，應維持下列事項之有效使用：一、防火門窗。二、走廊、樓梯、通道等避難設施。三、排煙設備。四、緊急照明設備。五、其他避難逃生相關設施。','消防法施行細則（內政部消防署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 消防法施行細則 §13</span>
+        </div>
+      </div>
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>共用部分使用</strong> — 大廳屬共用部分，設置包裹架需經管委會決議或區分所有權人會議同意。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('公寓大廈管理條例 第 9 條','各區分所有權人按其共有之應有部分比例，對建築物之共用部分及其基地有使用收益之權。但另有約定者從其約定。共用部分之使用，應依其設置目的及通常使用方法為之。','公寓大廈管理條例（內政部營建署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 公寓大廈管理條例 §9</span>
+          <span class="law-chip" onclick="openSheet('公寓大廈管理條例 第 16 條','住戶不得於私設通路、防火間隔、防火巷弄、開放空間、退縮空地、樓梯間、共同走廊、防空避難設備等處所堆置雜物、設置柵欄、門扇或營業使用，或違規設置廣告物或私設路障及停車位侵占巷道妨礙出入。','公寓大廈管理條例（內政部營建署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 公寓大廈管理條例 §16</span>
+        </div>
+      </div>
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>可燃物管理</strong> — 紙箱屬可燃物，暫存區應備有滅火器，且建議設定存放量上限。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('各類場所消防安全設備設置標準 第 31 條','滅火器應依下列規定設置：各層樓地板面積每 100 平方公尺應設置一具以上。設置於取用便利之明顯處所，且自樓地板面起不超過 1.5 公尺。','各類場所消防安全設備設置標準（內政部消防署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 設置標準 §31</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon"><span class="ico" style="width:13px;height:13px;"><svg><use href="#i-warn"/></svg></span></div>
+    <div><strong>建議事項</strong> — 移動式置物架選用附輪款式，緊急時可快速移除。建議於管委會會議紀錄中載明「為便利包裹暫存，於大廳設置移動式置物架」之決議，作為合法使用依據。</div>
+  </div>
+
+  <div class="budget-card">
+    <div class="budget-head">
+      <div class="budget-head-left">
+        <span class="ico"><svg><use href="#i-coin"/></svg></span>
+        <span class="budget-head-title">品項與預算</span>
+      </div>
+      <button class="btn-add" onclick="addRow(2)">＋ 新增品項</button>
+    </div>
+    <table class="b-table" id="budget-2">
+      <thead><tr><th>品項</th><th>說明</th><th class="num">數量</th><th class="num">單價</th><th class="num">小計</th><th class="act"></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><input class="ed" value="移動式置物架" oninput="calc(2)"></td>
+          <td><input class="ed" value="五層鍍鉻鐵架 90×45×180cm 附輪"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="2" min="0" oninput="calc(2)"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="2500" min="0" oninput="calc(2)"></td>
+          <td class="subtotal num">5,000</td>
+          <td><button class="btn-del" onclick="delRow(this,2)">×</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="budget-foot">
+      <span class="budget-foot-label">方案合計</span>
+      <span class="budget-foot-total t2" id="total-2">NT$ 5,000</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══ PANEL 3 ═══ -->
+<section class="panel" id="panel-3">
+
+  <div class="tier-hero t3">
+    <span class="tier-number">03</span>
+    <span class="tier-badge">Tier 3 — 物流管理</span>
+    <h2>物流暫存室</h2>
+    <p>B1 電信室整理為物流暫存空間 — 商業包裹 ＋ 大型包裹分流</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon brown"><span class="ico"><svg><use href="#i-pin"/></svg></span></div>
+      <div class="card-head-title">空間配置</div>
+    </div>
+    <div class="card-body">
+      <div class="detail-item"><span class="detail-key">地點</span><span class="detail-val">B1 電信室（目前閒置，無設備）</span></div>
+      <div class="detail-item"><span class="detail-key">對象</span><span class="detail-val">① 大型包裹、置物架無法放置的物件<br>② 管理室包裹室放不下的大量包裹</span></div>
+      <div class="detail-item"><span class="detail-key">方式</span><span class="detail-val">清潔整理 → 置物架＋棧板 → 分區暫存</span></div>
+      <div class="detail-item"><span class="detail-key">原則</span><span class="detail-val">純軟裝，不動結構，隨時可恢復原狀</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon brown"><span class="ico"><svg><use href="#i-clip"/></svg></span></div>
+      <div class="card-head-title">物流管理模式</div>
+    </div>
+    <div class="card-body">
+      <div class="check-item"><span class="check-dot t3" style="font-size:0.6rem;font-weight:700;color:white;">1</span><span><strong>入庫登記</strong> — 管理員將包裹搬入 B1 時，於智生活系統或登記簿記錄：住戶、件數、日期、存放位置</span></div>
+      <div class="check-item"><span class="check-dot t3" style="font-size:0.6rem;font-weight:700;color:white;">2</span><span><strong>分區暫存</strong> — 置物架依戶號或包裹類型分區，棧板區放大型 / 重物件，架上放中小型箱件</span></div>
+      <div class="check-item"><span class="check-dot t3" style="font-size:0.6rem;font-weight:700;color:white;">3</span><span><strong>通知領取</strong> — 入庫後即時通知住戶，住戶可自行至 B1 取件或請管理員協助搬運</span></div>
+      <div class="check-item"><span class="check-dot t3" style="font-size:0.6rem;font-weight:700;color:white;">4</span><span><strong>大型包裹分流</strong> — 管理室包裹室放不下的大型包裹，管理員直接送入此處暫存，不需住戶事先申請</span></div>
+    </div>
+  </div>
+
+  <!-- Legal -->
+  <div class="legal-card">
+    <div class="card-head">
+      <div class="card-head-icon amber"><span class="ico"><svg><use href="#i-scale"/></svg></span></div>
+      <div class="card-head-title">相關法規整理</div>
+    </div>
+    <div class="legal-body">
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>建築使用用途</strong> — 電信室於使用執照上有登記用途。純放置物品（軟裝）不涉及「變更使用」，但需注意不得影響電信維護人員進出。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('建築法 第 73 條','建築物非經領得使用執照，不准接水、接電或申請營業登記及使用。建築物應依核定之使用類組使用，其有變更使用類組或有建築技術規則所定之變更使用條件者，應申請變更使用執照。','建築法（內政部營建署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 建築法 §73</span>
+          <span class="law-chip" onclick="openSheet('建築物使用類組及變更使用辦法 第 2 條','建築物之使用類組，依其使用性質分為九大類二十四組。變更使用類組時，應申請直轄市、縣（市）主管建築機關核准。但同一使用類組內之變更使用，不在此限。','建築物使用類組及變更使用辦法（內政部）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 變更使用辦法 §2</span>
+        </div>
+      </div>
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>電信法相關</strong> — 電信室若仍屬電信業者使用範圍，需確認無佔用或妨礙維護之虞。目前該空間已閒置無設備。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('電信管理法 第 39 條','電信事業因設置電信設備之需要，得使用公有或私有之土地、建築物。建築物設置之電信設備空間，其管理使用應依建築物所有權人與電信事業之約定。社區管理委員會如需使用電信室空間，建議先確認電信業者是否仍有使用需求。','電信管理法（國家通訊傳播委員會）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 電信管理法 §39</span>
+        </div>
+      </div>
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>地下室消防要求</strong> — 地下層消防要求較地上層嚴格，應確認煙霧偵測器、滅火器配置，並注意火載量管控。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('消防法 第 6 條','本法所定各類場所之管理權人應設置並維護其消防安全設備；場所之分類及消防安全設備設置標準，由中央主管機關定之。地下層因通風及避難較困難，消防設備之設置標準較地上層為嚴。','消防法（內政部消防署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 消防法 §6</span>
+          <span class="law-chip" onclick="openSheet('各類場所消防安全設備設置標準 第 12 條','地下建築物之消防安全設備，應依其總樓地板面積設置。地下層應設置自動火災報知設備（包含偵煙式探測器）。樓地板面積達一定規模者，應設置自動撒水設備。','各類場所消防安全設備設置標準（內政部消防署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 設置標準 §12</span>
+        </div>
+      </div>
+      <div class="legal-group">
+        <div class="legal-group-head"><span class="legal-bullet"></span><div class="legal-group-text"><strong>共用部分決議</strong> — 電信室屬共用部分，變更用途需管委會決議紀錄，建議於區權會正式決議。</div></div>
+        <div class="legal-tags">
+          <span class="law-chip" onclick="openSheet('公寓大廈管理條例 第 10 條','專有部分、約定專用部分之修繕、管理、維護，由各該區分所有權人或約定專用部分之使用人為之。共用部分、約定共用部分之修繕、管理、維護，由管理負責人或管理委員會為之。其費用由公共基金支付或由區分所有權人按其共有之應有部分比例分擔之。','公寓大廈管理條例（內政部營建署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 公寓大廈管理條例 §10</span>
+          <span class="law-chip" onclick="openSheet('公寓大廈管理條例 第 31 條','區分所有權人會議之決議，除規約另有規定外，應有區分所有權人三分之二以上及其區分所有權比例合計三分之二以上出席，以出席人數四分之三以上及其區分所有權比例占出席人數區分所有權四分之三以上之同意行之。','公寓大廈管理條例（內政部營建署）')"><span class="ico" style="width:12px;height:12px;"><svg><use href="#i-section"/></svg></span> 公寓大廈管理條例 §31</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon"><span class="ico" style="width:13px;height:13px;"><svg><use href="#i-warn"/></svg></span></div>
+    <div><strong>重要提醒</strong> — 本方案僅採軟裝方式，不涉及建築結構變更。所有設備均可隨時撤除恢復原狀。建議保留電信業者無使用需求之書面確認。</div>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-icon"><span class="ico" style="width:13px;height:13px;"><svg><use href="#i-lock"/></svg></span></div>
+    <div><strong>安全提醒</strong> — B1 電信室目前無監視設備，建議僅存放大型 / 低價值商業包裹。高價值物品建議住戶自行加裝簡易攝影機或改存其他區域。</div>
+  </div>
+
+  <div class="budget-card">
+    <div class="budget-head">
+      <div class="budget-head-left">
+        <span class="ico"><svg><use href="#i-coin"/></svg></span>
+        <span class="budget-head-title">品項與預算</span>
+      </div>
+      <button class="btn-add" onclick="addRow(3)">＋ 新增品項</button>
+    </div>
+    <table class="b-table" id="budget-3">
+      <thead><tr><th>品項</th><th>說明</th><th class="num">數量</th><th class="num">單價</th><th class="num">小計</th><th class="act"></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><input class="ed" value="重型置物架" oninput="calc(3)"></td>
+          <td><input class="ed" value="五層鍍鉻鐵架 120×60×180cm 耐重型"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="3" min="0" oninput="calc(3)"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="3500" min="0" oninput="calc(3)"></td>
+          <td class="subtotal num">10,500</td>
+          <td><button class="btn-del" onclick="delRow(this,3)">×</button></td>
+        </tr>
+        <tr>
+          <td><input class="ed" value="塑膠棧板" oninput="calc(3)"></td>
+          <td><input class="ed" value="100×120cm 防潮棧板（地面隔離用）"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="4" min="0" oninput="calc(3)"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="450" min="0" oninput="calc(3)"></td>
+          <td class="subtotal num">1,800</td>
+          <td><button class="btn-del" onclick="delRow(this,3)">×</button></td>
+        </tr>
+        <tr>
+          <td><input class="ed" value="LED 感應燈" oninput="calc(3)"></td>
+          <td><input class="ed" value="USB 充電式人體感應燈條 60cm"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="2" min="0" oninput="calc(3)"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="350" min="0" oninput="calc(3)"></td>
+          <td class="subtotal num">700</td>
+          <td><button class="btn-del" onclick="delRow(this,3)">×</button></td>
+        </tr>
+        <tr>
+          <td><input class="ed" value="滅火器" oninput="calc(3)"></td>
+          <td><input class="ed" value="ABC 乾粉滅火器 10P（地下室用）"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="1" min="0" oninput="calc(3)"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="800" min="0" oninput="calc(3)"></td>
+          <td class="subtotal num">800</td>
+          <td><button class="btn-del" onclick="delRow(this,3)">×</button></td>
+        </tr>
+        <tr>
+          <td><input class="ed" value="清潔整理費" oninput="calc(3)"></td>
+          <td><input class="ed" value="電信室清潔、除塵、整理工資"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="1" min="0" oninput="calc(3)"></td>
+          <td class="num"><input class="ed ed-num" type="number" value="3000" min="0" oninput="calc(3)"></td>
+          <td class="subtotal num">3,000</td>
+          <td><button class="btn-del" onclick="delRow(this,3)">×</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="budget-foot">
+      <span class="budget-foot-label">方案合計</span>
+      <span class="budget-foot-total t3" id="total-3">NT$ 16,800</span>
+    </div>
+  </div>
+
+</section>
+
+</div>
+
+<!-- ══ BOTTOM BAR ══ -->
+<div class="bottom-bar">
+  <div class="bottom-bar-left">Tier 2 + Tier 3<br>預估總預算</div>
+  <div class="bottom-bar-right">
+    <div class="bottom-bar-total" id="grand-total">NT$ 21,800</div>
+    <div class="bottom-bar-hint">Tier 1 無需額外預算</div>
+  </div>
+</div>
+
+<!-- ══ BOTTOM SHEET ══ -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle" id="sheetHandle"></div>
+  <button class="sheet-close" onclick="closeSheet()">
+    <span class="ico" style="width:14px;height:14px;"><svg><use href="#i-x"/></svg></span>
+  </button>
+  <div class="sheet-head">
+    <div class="sheet-title" id="sheetTitle"></div>
+    <div class="sheet-source" id="sheetSource"></div>
+  </div>
+  <div class="sheet-content">
+    <div class="sheet-text" id="sheetText"></div>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ══ -->
+<script>
+let currentTab = 1;
+
+function switchTab(n) {
+  currentTab = n;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-tab="${n}"]`);
+  btn.classList.add('active');
+  document.getElementById(`panel-${n}`).classList.add('active');
+  const indicator = document.getElementById('tabIndicator');
+  const rect = btn.getBoundingClientRect();
+  const parentRect = btn.parentElement.getBoundingClientRect();
+  indicator.style.left = (rect.left - parentRect.left) + 'px';
+  indicator.style.width = rect.width + 'px';
+  indicator.setAttribute('data-active', n);
+}
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const n = parseInt(btn.getAttribute('data-tab'));
+    let tapX, tapY;
+    btn.addEventListener('touchstart', function(e) {
+      tapX = e.touches[0].clientX;
+      tapY = e.touches[0].clientY;
+    }, { passive: true });
+    btn.addEventListener('touchend', function(e) {
+      const dx = Math.abs(e.changedTouches[0].clientX - tapX);
+      const dy = Math.abs(e.changedTouches[0].clientY - tapY);
+      if (dx < 20 && dy < 20) {
+        e.preventDefault();
+        switchTab(n);
+      }
+    });
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchTab(n);
+    });
+  });
+  switchTab(1);
+});
+window.addEventListener('resize', () => {
+  const active = document.querySelector('.tab-btn.active');
+  if (active) {
+    const indicator = document.getElementById('tabIndicator');
+    const rect = active.getBoundingClientRect();
+    const parentRect = active.parentElement.getBoundingClientRect();
+    indicator.style.left = (rect.left - parentRect.left) + 'px';
+    indicator.style.width = rect.width + 'px';
+  }
+});
+
+let touchStartX = 0;
+let touchStartY = 0;
+let touchStartedOnTab = false;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchStartedOnTab = !!e.target.closest('.tab-bar');
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  if (touchStartedOnTab) return;
+  const diffX = e.changedTouches[0].clientX - touchStartX;
+  const diffY = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(diffX) > 80 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+    if (diffX < 0 && currentTab < 3) switchTab(currentTab + 1);
+    else if (diffX > 0 && currentTab > 1) switchTab(currentTab - 1);
+  }
+});
+
+const fmt = n => n.toLocaleString('zh-TW');
+
+function calc(tier) {
+  const table = document.getElementById(`budget-${tier}`);
+  if (!table) return;
+  let total = 0;
+  table.querySelectorAll('tbody tr').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const qty = parseInt(inputs[2].value) || 0;
+    const price = parseInt(inputs[3].value) || 0;
+    const sub = qty * price;
+    row.querySelector('.subtotal').textContent = fmt(sub);
+    total += sub;
+  });
+  document.getElementById(`total-${tier}`).textContent = `NT$ ${fmt(total)}`;
+  grandTotal();
+}
+
+function grandTotal() {
+  let g = 0;
+  [2, 3].forEach(tier => {
+    const table = document.getElementById(`budget-${tier}`);
+    if (!table) return;
+    table.querySelectorAll('tbody tr').forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      g += (parseInt(inputs[2].value) || 0) * (parseInt(inputs[3].value) || 0);
+    });
+  });
+  document.getElementById('grand-total').textContent = `NT$ ${fmt(g)}`;
+}
+
+function addRow(tier) {
+  const tbody = document.getElementById(`budget-${tier}`).querySelector('tbody');
+  const tr = document.createElement('tr');
+  tr.style.animation = 'panelIn 0.3s var(--ease-out) both';
+  tr.innerHTML = `
+    <td><input class="ed" value="" placeholder="品項名稱" oninput="calc(${tier})"></td>
+    <td><input class="ed" value="" placeholder="說明"></td>
+    <td class="num"><input class="ed ed-num" type="number" value="1" min="0" oninput="calc(${tier})"></td>
+    <td class="num"><input class="ed ed-num" type="number" value="0" min="0" oninput="calc(${tier})"></td>
+    <td class="subtotal num">0</td>
+    <td><button class="btn-del" onclick="delRow(this,${tier})">×</button></td>
+  `;
+  tbody.appendChild(tr);
+  tr.querySelector('input').focus();
+}
+
+function delRow(btn, tier) {
+  const row = btn.closest('tr');
+  row.style.opacity = '0';
+  row.style.transform = 'translateX(20px)';
+  row.style.transition = 'all 0.25s ease';
+  setTimeout(() => { row.remove(); calc(tier); }, 250);
+}
+
+function openSheet(title, text, source) {
+  document.getElementById('sheetTitle').textContent = title;
+  document.getElementById('sheetText').textContent = text;
+  document.getElementById('sheetSource').textContent = `法源：${source}`;
+  document.getElementById('sheetOverlay').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSheet() {
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.getElementById('sheet').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+let sheetTouchY = 0;
+document.getElementById('sheetHandle').addEventListener('touchstart', e => { sheetTouchY = e.touches[0].clientY; }, { passive: true });
+document.getElementById('sheetHandle').addEventListener('touchend', e => { if (e.changedTouches[0].clientY - sheetTouchY > 50) closeSheet(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+</script>
+
+</body>
+</html>
